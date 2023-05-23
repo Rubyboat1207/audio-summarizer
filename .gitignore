@@ -1,4 +1,8 @@
 *.mp3
-output/*
-__pycache__/*
 .idea
+
+output/
+dist/
+build/
+__pycache__/
+venv/
