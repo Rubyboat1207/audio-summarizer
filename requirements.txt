@@ -1,0 +1,3 @@
+openai~=0.27.7
+customtkinter~=5.1.3
+pvrecorder~=1.1.1
