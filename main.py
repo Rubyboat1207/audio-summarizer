@@ -33,7 +33,8 @@ def selectDevice(choice):
 summarizeTypes = [
     'Lecture',
     'Conversation',
-    'Story'
+    'Story',
+    'Instructions'
 ]
 
 def setSummaryType(choice):
@@ -44,6 +45,8 @@ def setSummaryType(choice):
         sumfunc = summi.summarizeConversation
     elif choice == 'Story':
         sumfunc = summi.summarizeStory
+    elif choice == 'Instructions':
+        sumfunc = summi.summarizeInstructions
     else:
         sumfunc = summi.summarizeLecture
 
@@ -94,6 +97,7 @@ def whileRecording():
         f.writeframes(struct.pack("h" * len(audio), *audio))
 
     recorder.delete()
+    audio = []
     recorder = PvRecorder(device_index=deviceIndex, frame_length=512)
 
     recordingDone = True
@@ -130,11 +134,12 @@ def record():
         # Complete Editing:
         outputbox.configure(state = tkinter.DISABLED)
 
+        if os.path.exists(recordPath):
+            os.remove(recordPath)
+
 everythingButton = customtkinter.CTkButton(master=app, textvariable=everythingbuttonText, command=record)
 everythingButton.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
 
 app.mainloop()
 isRecording = False
 recorder.delete()
-if os.path.exists(recordPath):
-    os.remove(recordPath)
