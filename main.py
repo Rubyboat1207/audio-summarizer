@@ -1,40 +1,46 @@
-import customtkinter
+"""Main Module for speech to summary"""
+
+import os
+import struct
+import threading
+import time
 import tkinter
 import wave
+
+import customtkinter
 from pvrecorder import PvRecorder
-import threading
-import struct
-import time
-import os
 
-from voice import TranscriptionController
 from summarize import SummarizeController
+from voice import TranscriptionController
 
-global summaryManager
-global transcriptMananger
+# global SUMMARY_MANAGER
+# global TRANSCRIPT_MANAGER
 
-summaryManager = SummarizeController('')
-transcriptMananger = TranscriptionController('')
+SUMMARY_MANAGER = SummarizeController('')
+TRANSCRIPT_MANAGER = TranscriptionController('')
 
 customtkinter.set_appearance_mode('System')
 customtkinter.set_default_color_theme('blue')
 
 devices = PvRecorder.get_audio_devices()
-global deviceIndex
-deviceIndex = 0
-global recorder
-recorder = PvRecorder(device_index=0, frame_length=512)
-global sumfunc
-sumfunc = summaryManager.summarizeLecture
+# global DEVICE_INDEX
+DEVICE_INDEX = 0
+# global RECORDER
+RECORDER = PvRecorder(device_index=0, frame_length=512)
+# global SUMMARY_FUNCTION
+SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeLecture
 
 
 for index, device in enumerate(devices):
     print(f"[{index}] {device}")
 
-def selectDevice(choice):
-    global recorder
-    deviceIndex = devices.index(choice)
-    recorder = PvRecorder(device_index=deviceIndex, frame_length=512)
+def select_device(choice):
+    """used by the dropdown to select a recording device"""
+    global RECORDER
+    global DEVICE_INDEX
+    DEVICE_INDEX = devices.index(choice)
+    RECORDER = PvRecorder(device_index=DEVICE_INDEX, frame_length=512)
+
 
 summarizeTypes = [
     'Lecture',
@@ -43,19 +49,21 @@ summarizeTypes = [
     'Instructions'
 ]
 
-def setSummaryType(choice):
-    global sumfunc
-    global summaryManager
+
+def set_summary_type(choice):
+    """used by the dropdown to select a summary type"""
+    global SUMMARY_FUNCTION
+
     if choice == 'Lecture':
-        sumfunc = summaryManager.summarizeLecture
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeLecture
     elif choice == 'Conversation':
-        sumfunc = summaryManager.summarizeConversation
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeConversation
     elif choice == 'Story':
-        sumfunc = summaryManager.summarizeStory
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeStory
     elif choice == 'Instructions':
-        sumfunc = summaryManager.summarizeInstructions
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeInstructions
     else:
-        sumfunc = summaryManager.summarizeLecture
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeLecture
 
 
 app = customtkinter.CTk()
@@ -65,120 +73,119 @@ app.title('Summarize This')
 everythingbuttonText = customtkinter.StringVar(app, "Record")
 
 outputbox = customtkinter.CTkTextbox(master=app, width=400)
-deviceDropdown = customtkinter.CTkComboBox(master=app, values=devices, command=selectDevice, width=450)
-audioTypeDropdown = customtkinter.CTkComboBox(master=app, values=summarizeTypes, command=setSummaryType)
-keybox = customtkinter.CTkTextbox(master=app, border_color='#444444', border_width=4, height=30, width=450)
+deviceDropdown = customtkinter.CTkComboBox(
+    master=app, values=devices, command=select_device, width=450)
+audioTypeDropdown = customtkinter.CTkComboBox(
+    master=app, values=summarizeTypes, command=set_summary_type)
+keybox = customtkinter.CTkTextbox(
+    master=app, border_color='#444444', border_width=4, height=30, width=450)
 
-def setTokFromTextbox():
-    global summaryManager
-    global transcriptMananger
 
+def set_token_from_textbox():
+    """used to update summary & transcript api tokens"""
     tex = keybox.get('1.0', tkinter.END).rstrip()
 
-    summaryManager.key = tex
-    transcriptMananger.key = tex
-
-keySet = customtkinter.CTkButton(master=app, command=setTokFromTextbox, text="set token")
+    SUMMARY_MANAGER.key = tex
+    TRANSCRIPT_MANAGER.key = tex
 
 
+keySet = customtkinter.CTkButton(
+    master=app, command=set_token_from_textbox, text="set token")
 
-setTokenFrom = setTokFromTextbox
 
-outputbox.configure(state = tkinter.DISABLED)
+setTokenFrom = set_token_from_textbox
+
+outputbox.configure(state=tkinter.DISABLED)
 outputbox.place(relx=0.5, rely=0.4, anchor=tkinter.CENTER)
 deviceDropdown.place(relx=0.5, rely=0.8, anchor=tkinter.CENTER)
 audioTypeDropdown.place(relx=0.5, rely=0.9, anchor=tkinter.CENTER)
 keybox.place(relx=0.4, rely=0.1, anchor=tkinter.CENTER)
 keySet.place(relx=0.8, rely=0.1, anchor=tkinter.CENTER)
 
-global isRecording
-isRecording = False
-global recordPath
-recordPath = 'recording.mp3'
+# global IS_RECORDING
+IS_RECORDING = False
+# global RECORD_PATH
+RECORD_PATH = 'recording.mp3'
 outputpath = './out/'
-global audio
-audio = []
-global recordthread
-global recordingDone
-recordingDone = False
+# global AUDIO_CACHE
+AUDIO_CACHE = []
+# global RECORDING_COMPLETE
+RECORDING_COMPLETE = False
 
-def whileRecording():
-    global recordingDone
-    global isRecording
-    global recorder
-    global audio
 
-    if recorder is None:
-        recorder = PvRecorder(device_index=-1, frame_length=512)
-    
-    recordingDone = False
+def while_recording():
+    """ran async in other thread to record to file"""
+    global RECORDING_COMPLETE
+    global RECORDER
+
+    if RECORDER is None:
+        RECORDER = PvRecorder(device_index=-1, frame_length=512)
+
+    RECORDING_COMPLETE = False
     print('beginning recording')
-    recorder.start()
-    while isRecording:
-        frame = recorder.read()
-        audio.extend(frame)
+    RECORDER.start()
+    while IS_RECORDING:
+        frame = RECORDER.read()
+        AUDIO_CACHE.extend(frame)
 
-    recorder.stop()
-    with wave.open(recordPath, 'w') as f:
-        f.setparams((1, 2, 16000, 512, "NONE", "NONE"))
-        f.writeframes(struct.pack("h" * len(audio), *audio))
+    RECORDER.stop()
+    with wave.open(RECORD_PATH, 'w') as wave_write:
+        wave_write.setparams((1, 2, 16000, 512, "NONE", "NONE"))
+        wave_write.writeframes(struct.pack("h" * len(AUDIO_CACHE), *AUDIO_CACHE))
 
-    recorder.delete()
-    recorder = PvRecorder(device_index=deviceIndex, frame_length=512)
+    RECORDER.delete()
+    RECORDER = PvRecorder(device_index=DEVICE_INDEX, frame_length=512)
 
-    recordingDone = True
+    RECORDING_COMPLETE = True
     print('completed recording')
 
-def record():
-    global sumfunc
-    global recordingDone
-    global recordthread
-    global isRecording
-    global deviceIndex
-    global audio
-    global token
-    global transcriptMananger
 
-    isRecording = not isRecording
-    everythingbuttonText.set( 'Stop' if isRecording else 'Record')
-    if isRecording:
-        audio = []
-        recordthread = threading.Thread(target=whileRecording)
-        
+def record():
+    """ran on button click"""
+    global IS_RECORDING
+    global AUDIO_CACHE
+
+    IS_RECORDING = not IS_RECORDING
+    everythingbuttonText.set('Stop' if IS_RECORDING else 'Record')
+    if IS_RECORDING:
+        AUDIO_CACHE = []
+        recordthread = threading.Thread(target=while_recording)
+
         recordthread.start()
 
         print('starting')
     else:
-        while not recordingDone:
+        while not RECORDING_COMPLETE:
             print('waiting')
             time.sleep(0.1)
         # Allow Editing:
-        outputbox.configure(state = tkinter.NORMAL)
+        outputbox.configure(state=tkinter.NORMAL)
 
         # Edit:
         outputbox.delete('0.0', 'end')
-        transcript = transcriptMananger.transcribe(recordPath)
-        summary = sumfunc(transcript)
+        transcript = TRANSCRIPT_MANAGER.transcribe(RECORD_PATH)
+        summary = SUMMARY_FUNCTION(transcript)
         print(summary)
         outputbox.insert('0.0', summary)
 
         # Complete Editing:
-        outputbox.configure(state = tkinter.DISABLED)
-        
+        outputbox.configure(state=tkinter.DISABLED)
+
         if not os.path.exists(outputpath):
             os.mkdir(outputpath)
 
         files = os.listdir(outputpath)
 
-        with open(outputpath + str(len(files)) + '.txt', 'w') as thing:
+        with open(outputpath + str(len(files)) + '.txt', 'w', encoding='UTF-8') as thing:
             thing.write(f'Summary:\n{summary}\nRaw Transcript:\n{transcript}')
-        
 
-everythingButton = customtkinter.CTkButton(master=app, textvariable=everythingbuttonText, command=record)
+
+everythingButton = customtkinter.CTkButton(
+    master=app, textvariable=everythingbuttonText, command=record)
 everythingButton.place(relx=0.5, rely=0.7, anchor=tkinter.CENTER)
 
 app.mainloop()
-isRecording = False
-recorder.delete()
-if os.path.exists(recordPath):
-    os.remove(recordPath)
+IS_RECORDING = False
+RECORDER.delete()
+if os.path.exists(RECORD_PATH):
+    os.remove(RECORD_PATH)
