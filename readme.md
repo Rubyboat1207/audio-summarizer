@@ -3,7 +3,7 @@ The program will ask for a token each time it's reopened, to get a token you can
 
 # How to download
 
-Go to the [builds page](https://github.com/Rubyboat1207/audio-summarizer/actions/workflows/pyinstaller.yml) and click on the latest ran workflow. Then scroll down to artifacts to grab the latest windows build. If you're on linux, check the "Run from source" section for details. 
+Go to the [(win) builds page](https://github.com/Rubyboat1207/audio-summarizer/actions/workflows/pyinstaller.yml) or [(linux) builds page](https://github.com/Rubyboat1207/audio-summarizer/actions/workflows/pyinstaller-linux.yml) and click on the latest ran workflow. Then scroll down to artifacts to grab the latest windows build.
 
 # Run from source
 
