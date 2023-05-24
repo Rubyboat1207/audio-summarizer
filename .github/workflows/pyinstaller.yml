@@ -32,4 +32,4 @@ jobs:
       with:
         name: get built exe
         path: |
-          dist/main.zip
+          build.zip
