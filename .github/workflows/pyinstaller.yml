@@ -30,6 +30,6 @@ jobs:
     - name: Create build artifact
       uses: actions/upload-artifact@v3
       with:
-        name: get built exe
+        name: win-build.zip
         path: |
           build.zip
