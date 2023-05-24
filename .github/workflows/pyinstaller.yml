@@ -22,4 +22,5 @@ jobs:
         pip install pyinstaller
     - name: Build the code with pyinstaller
       run: |
+        ls /opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages
         pyinstaller --noconfirm --onedir --windowed --add-data "/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/customtkinter;customtkinter/" --add-data "/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/pvrecorder;pvrecorder/"  "./main.py"
