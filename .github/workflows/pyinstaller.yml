@@ -22,7 +22,8 @@ jobs:
         pip install pyinstaller
     - name: Build the code with pyinstaller
       run: |
-        pyinstaller --noconfirm --onedir --windowed --add-data "C:/hostedtoolcache/windows/Python/3.11.3/x64/Lib/site-packages/customtkinter;customtkinter/" --add-data "C:/hostedtoolcache/windows/Python/3.11.3/x64/Lib/site-packages/pvrecorder;pvrecorder/"  "./main.py"
+        dir C:/hostedtoolcache/windows/python/3.11.3/x64/lib/site-packages
+        pyinstaller --noconfirm --onedir --windowed --add-data "c:/hostedtoolcache/windows/python/3.11.3/x64/lib/site-packages/customtkinter;customtkinter/" --add-data "c:/hostedtoolcache/windows/Python/3.11.3/x64/Lib/site-packages/pvrecorder;pvrecorder/"  "./main.py"
     - name: Create build artifact
       uses: actions/upload-artifact@v3
       with:
