@@ -55,15 +55,15 @@ def set_summary_type(choice):
     global SUMMARY_FUNCTION
 
     if choice == 'Lecture':
-        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeLecture
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_lecture
     elif choice == 'Conversation':
-        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeConversation
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_conversation
     elif choice == 'Story':
-        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeStory
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_story
     elif choice == 'Instructions':
-        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeInstructions
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_instructions
     else:
-        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeLecture
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_lecture
 
 
 app = customtkinter.CTk()
@@ -106,7 +106,7 @@ keySet.place(relx=0.8, rely=0.1, anchor=tkinter.CENTER)
 IS_RECORDING = False
 # global RECORD_PATH
 RECORD_PATH = 'recording.mp3'
-outputpath = './out/'
+OPTUPUT_PATH = './out/'
 # global AUDIO_CACHE
 AUDIO_CACHE = []
 # global RECORDING_COMPLETE
@@ -171,12 +171,12 @@ def record():
         # Complete Editing:
         outputbox.configure(state=tkinter.DISABLED)
 
-        if not os.path.exists(outputpath):
-            os.mkdir(outputpath)
+        if not os.path.exists(OPTUPUT_PATH):
+            os.mkdir(OPTUPUT_PATH)
 
-        files = os.listdir(outputpath)
+        files = os.listdir(OPTUPUT_PATH)
 
-        with open(outputpath + str(len(files)) + '.txt', 'w', encoding='UTF-8') as thing:
+        with open(OPTUPUT_PATH + str(len(files)) + '.txt', 'w', encoding='UTF-8') as thing:
             thing.write(f'Summary:\n{summary}\nRaw Transcript:\n{transcript}')
 
 
