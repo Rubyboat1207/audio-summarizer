@@ -28,7 +28,7 @@ DEVICE_INDEX = 0
 # global RECORDER
 RECORDER = PvRecorder(device_index=0, frame_length=512)
 # global SUMMARY_FUNCTION
-SUMMARY_FUNCTION = SUMMARY_MANAGER.summarizeLecture
+SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_lecture
 
 
 for index, device in enumerate(devices):
@@ -130,7 +130,9 @@ def while_recording():
 
     RECORDER.stop()
     with wave.open(RECORD_PATH, 'w') as wave_write:
+        # pylint: disable=no-member
         wave_write.setparams((1, 2, 16000, 512, "NONE", "NONE"))
+        # pylint: disable=no-member
         wave_write.writeframes(struct.pack("h" * len(AUDIO_CACHE), *AUDIO_CACHE))
 
     RECORDER.delete()
