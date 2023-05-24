@@ -1,11 +1,13 @@
 import openai
-from secret import key
 
-openai.api_key = key
+class TranscriptionController:
 
-def transcribe(path):
-    transcription = openai.Audio.transcribe('whisper-1', open(path, 'rb'))['text']
-    
-    print('raw transcription: ' + transcription)
+    def __init__(self, key: str) -> None:
+        self.key = key
 
-    return transcription
+    def transcribe(self, path):
+        transcription = openai.Audio.transcribe('whisper-1', open(path, 'rb'), self.key)['text']
+        
+        print('raw transcription: ' + transcription)
+
+        return transcription

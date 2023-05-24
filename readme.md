@@ -1,6 +1,5 @@
 # Prerequisites
-Before use, remember to get a token from https://platform.openai.com/account/api-keys
-and place it in secret.py
+The program will ask for a token each time it's reopened, to get a token you can get it from https://platform.openai.com/account/api-keys. You should store it somewhere easy to copy, as it does not save right now.
 
 install requirements:
 ```
