@@ -23,13 +23,9 @@ jobs:
     - name: Build the code with pyinstaller
       run: |
         pyinstaller --noconfirm --onedir --windowed --add-data "/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/customtkinter:customtkinter/" --add-data "/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/pvrecorder:pvrecorder/"  "./main.py"
-    - name: Create ZIP Archive
-      run: |
-        zip -R build dist/main/*
-        ls
     - name: Create build artifact
       uses: actions/upload-artifact@v3
       with:
         name: win-build
         path: |
-          build.zip
+          dist/main/*
