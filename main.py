@@ -81,6 +81,8 @@ def whileRecording():
     global recordingDone
     global isRecording
     global recorder
+    global audio
+    
     if recorder is None:
         recorder = PvRecorder(device_index=-1, frame_length=512)
     
@@ -97,7 +99,6 @@ def whileRecording():
         f.writeframes(struct.pack("h" * len(audio), *audio))
 
     recorder.delete()
-    audio = []
     recorder = PvRecorder(device_index=deviceIndex, frame_length=512)
 
     recordingDone = True
@@ -109,10 +110,12 @@ def record():
     global recordthread
     global isRecording
     global deviceIndex
+    global audio
 
     isRecording = not isRecording
     everythingbuttonText.set( 'Stop' if isRecording else 'Record')
     if isRecording:
+        audio = []
         recordthread = threading.Thread(target=whileRecording)
         
         recordthread.start()
