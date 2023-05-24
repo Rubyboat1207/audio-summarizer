@@ -22,5 +22,5 @@ jobs:
         pip install pyinstaller
     - name: Build the code with pyinstaller
       run: |
-        python3 -c "import site; print(site.getsitepackages())""
+        python3 -c "import site; print(site.getsitepackages())"
         pyinstaller --noconfirm --onedir --windowed --add-data "/usr/local/lib/Python310/Lib/site-packages/customtkinter;customtkinter/" --add-data "/usr/local/lib/Python310/Lib/site-packages/pvrecorder;pvrecorder/"  "./main.py"
