@@ -1,4 +1,4 @@
-name: Build For Linux
+name: Build For Windows
 
 on: [push]
 
