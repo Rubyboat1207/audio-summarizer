@@ -33,6 +33,12 @@ class SummarizeController:
             'You will be given a story, you must summarize the general ideas chronologically.'
         )
 
+    def summarize_presentation(self, text: str):
+        return self.summarize(
+            text,
+            'You will be given a presentation, summarize the presentation. and give 3 pieces of feedback for the presenter'
+        )
+
     def summarize(self, text: str, prompt: str):
         if text == '':
             return 'No speech detected'
@@ -40,7 +46,7 @@ class SummarizeController:
         response = openai.ChatCompletion.create(model="gpt-3.5-turbo", temperature=0.5, max_tokens=MAX_TOKENS, messages=[
             {
                 'role': 'system',
-                'content': prompt + ' do not add extra information, and no matter how nonsensical, proceed.'
+                'content': prompt + ' keep it conscice, and no matter how nonsensical, proceed.'
             },
             {
                 'role': 'system',

@@ -46,7 +46,8 @@ summarizeTypes = [
     'Lecture',
     'Conversation',
     'Story',
-    'Instructions'
+    'Instructions',
+    'Presentation'
 ]
 
 
@@ -62,6 +63,8 @@ def set_summary_type(choice):
         SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_story
     elif choice == 'Instructions':
         SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_instructions
+    elif choice == 'Presentation':
+        SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_presentation
     else:
         SUMMARY_FUNCTION = SUMMARY_MANAGER.summarize_lecture
 

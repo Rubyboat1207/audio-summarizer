@@ -1,6 +1,12 @@
 # Prerequisites
 The program will ask for a token each time it's reopened, to get a token you can get it from https://platform.openai.com/account/api-keys. You should store it somewhere easy to copy, as it does not save right now.
 
+# How to download
+
+Go to the [builds page](https://github.com/Rubyboat1207/audio-summarizer/actions/workflows/pyinstaller.yml) and click on the latest ran workflow. Then scroll down to artifacts to grab the latest windows build. If you're on linux, check the "Run from source" section for details. 
+
+# Run from source
+
 install requirements:
 ```
 pip install -r requirements.txt
@@ -11,7 +17,7 @@ then to use normally, just type the following into the console:
 py main.py
 ```
 
-# Build Instructions
+# Build from source
 
 I used "auto py to exe" to build but it can be done just as easily using command line
 
